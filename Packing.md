@@ -1,4 +1,4 @@
-# F1Manager 2022 How to Unpack/pack Files
+# F1Manager 2022 How to Unpack/repack Files
 This is a guide to unpacking and packing game files of the game F1 Manager 2022.
 
 ## Requirements
