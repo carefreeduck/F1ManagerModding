@@ -2,41 +2,47 @@
 This is a guide to making numerical change mods to the game F1 Manager 2022.
 
 ## Requirements
-- Asset Editor by kaiheilos https://github.com/kaiheilos/Utilities
-- WinHex https://www.x-ways.net/winhex/
+- FModel.zip included in this repository
 
 ## Preparing Modding Files
 Follow Unpacking guide found [here](https://github.com/carefreeduck/F1ManagerModding/blob/main/Packing.md).
 
 ## Modding Tyre Wear of Highest Pace Mode
-To change numerical numbers, first you need to figure out which file they are located in. I recommend [FModel](https://github.com/4sval/FModel) for quickly checking files. In this guide we will change tyre wear ratio of highest pace mode. From inspecting files, I found that we have these numbers defined in `RaceSimDataAsset.uasset`:
+To change numerical numbers, first you need to figure out which file they are located in. We will use a modified version of FModel to locate numbers and make changes to them. In this guide we will change tyre wear ratio of pace modes. From inspecting files, I found that we have these numbers defined in `RaceSimDataAsset.uasset`:
 
 ![Tyre wear numbers](https://i.imgur.com/TOzXfmp.png)
 
-Although it doesn't say which number is for which pace mode, easy to conclude it is in pace mode order from highest to lowest and the Normal mode is not included, meaning it is 1. So we need to change 1.1. To do that we need to find location of this number in `RaceSimDataAsset.uexp` file (If you would like to know more about .uasset and .uexp files, check end of this guide).
-First copy `RaceSimDataAsset.uasset` and `RaceSimDataAsset.uexp` files located under `ModdingFiles\Extracted\F1Manager22\Content\RaceSim` to `ModdingFiles\F1Manager22\Content\RaceSim`. You will need to create folders with same names under `ModdingFiles`.
-Run AssetEditor.exe downloaded earlier. Go to `File->Open` and open `RaceSimDataAsset.uasset`. From left expand `Code Block` and click on `Block 1: RaceSimDataAsset`. This will show numerical values in the file on the right. Find `TyreWearPaceMode` values and note the offset on the left:
+Although it doesn't say which number is for which pace mode, easy to conclude it is in pace mode order from highest to lowest and the Normal mode is not included, meaning it is 1.
+First copy `RaceSimDataAsset.uasset` and `RaceSimDataAsset.uexp` files located under `ModdingFiles\Extracted\F1Manager22\Content\RaceSim` to the folder you configured FModel to look at. If you own the game through Steam and FModel could detect it, it will already have a configuration for you. If that is the case, copy these files to your game folder into `steamapps\common\F1Manager2022\F1Manager22\Content\Paks`.
+If FModel couldn't detect your game or if you prefer it to use a different folder, you can add your own configuration:
 
-![Offset](https://i.imgur.com/FlAbeds.png)
+![Adding new configuration](https://i.imgur.com/0Srqmen.png)
 
-Open WinHex downloaded earlier. Drag and drop `RaceSimDataAsset.uexp` you copied earlier into WinHex. This will show us the file content in hex values. Do not be scared, it is not that hard! First go to `View->Show->Data Interpreter` from top. Then go to `Options->Data Interpreter...`. From the screen that opened, untick everything and tick `Float (=Single, 32 bit)` and then click `OK`. This small window opened will let us see the numbers starting from an index.
+First click on the little button marked as 1. This will expand bottom section. You can put anything you want as the name. Directory should be where you want to put your files. Then click on the button marked as 2. This will add the configuration. Now you can use it.
 
-Before moving on, check `Offset` on the left of your WinHex window and if it shows letters with numbers, click on it once. This will change offset from hexadecimal to decimal, the numbers we are most familiar with.
+Once you configure FModel and start it, you will see `<Local files..>` option with other pak files if your folder has pak files too.
 
-Remember we noted offset of the value we wanted to change as 373. Now we need to find this offset. From top go to `Navigation->Go to Offset...`. In the window opened, type 373 and click OK (make sure relative to is selected as `beginning`). This will take us to the location our tyre wear number is. You can see now that our Data Interpreter window is showing us the original number:
+![Game archives](https://i.imgur.com/fvY5BkH.png)
 
-![Data Interpreter](https://i.imgur.com/s7T0HdZ.png)
+Double click on `<Local files..>` and locate to `RaceSimDataAsset.uasset` by locating through directory tree. You can double click on the file to see content.
 
-Now click on the text box in Data Interpreter and type 3 and hit enter. This will change the original value to 3 and you can see changed hex values in blue:
+![File contents](https://i.imgur.com/cO4a9VA.png)
 
-![Data Interpreter](https://i.imgur.com/9KAstEQ.png)
+You can see the `TyreWearPaceMode` numbers we are interested in (I also had some other files in the folder as you can see on the left. Don't be alarmed if those aren't shown in yours.). Now we want to export editable numbers from this file to a text file so we can change it.
 
-Now you can do CTRL + S and save your file. When asked if you sure, click `Yes`.
+![Export and import](https://i.imgur.com/4jMpusE.png)
 
-Our files are ready to be repacked and used as a mod. You can follow the guide [here](https://github.com/carefreeduck/F1ManagerModding/blob/main/Packing.md) for repacking.
+Right click on `RaceSimDataAsset.uasset` and click on `Export Value Map`, marked as 1. Pick a location when asked and save the file. This will save a `.json` file. If you don't know what JSON is, don't worry. We can edit this file with any text editor. Now open this file in a text editor (I recommend [Notepad++](https://notepad-plus-plus.org/downloads/)).
 
-## Understanding .uasset and .uexp files
-The way Unreal Engine works is .uasset files keep information about data used by the game and .uexp files keep the data itself. So to explain using our mod example, .uasset tells us that there is a number that is called `TyreWearPaceMode` and it is a floating point number. The file also tells us where this number is located (offset). But to change the number itself, we need to change .uexp file, where it is actually located.
+![Edited json file](https://i.imgur.com/s9kTdyn.png)
+
+As you can see I opened the json file in text editor and changed pace values and saved the file. Now we need to import this file. Right click on `RaceSimDataAsset.uasset` and click on `Import Value Map`, marked as 2 in above image. If you did everything correctly, you will see logs at the bottom of FModel saying our changes are applied.
+
+![Logs](https://i.imgur.com/3yFH0XG.png)
+
+If you don't see logs, click on the little button marked as 1.
+
+Our files are ready to be repacked and used as a mod. First copy them into `ModdingFiles\F1Manager22\Content\RaceSim`. You will need to create these folders if they don't already exist. Note how the folder structure is same with extracted. Once you copied the files, you need to change `pack_list.txt` to list all the files you want to be packed. The downloaded file in this repository already has lines for this example. After that you can follow the guide [here](https://github.com/carefreeduck/F1ManagerModding/blob/main/Packing.md) for repacking.
 
 ## Can I change only numbers?
-You can change anything as long as you can modify the files in the correct way. As explained before, .uasset keeps information about data while .uexp keeps the data itself. Changing numbers is easy because their data size doesn't change. If you wanted to change something else and ended up with a different data size, you would need to change all the offsets coming after that one and file size information kept in .uasset file. There are programs people developed to make this easier but unfortunately I couldn't find one that works on this engine version (4.27).
+Modified FModel currently supports only numbers. I plan to add support for more in the future.
